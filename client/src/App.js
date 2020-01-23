@@ -1,4 +1,6 @@
 import React from 'react';
+import World from './components/World';
+
 import './App.css';
 
 function App() {
@@ -8,6 +10,7 @@ function App() {
         <p>
           django_unchained
         </p>
+        <World />
 
       </header>
     </div>
