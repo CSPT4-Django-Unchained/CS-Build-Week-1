@@ -12,6 +12,10 @@ def jprint(obj):
     text = json.dumps(obj, sort_keys=True, indent=4)
     print(text)
 
+def format_data(obj):
+    text = json.dumps(obj, sort_keys=True, indent=4)
+    return text
+
 url = 'https://www.giantbomb.com/api/locations/'
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
@@ -25,8 +29,12 @@ parameters = {
 
 response = requests.get(url, headers=headers, params=parameters)
 if response.status_code == 200:
-    room_data = response.json()
-    jprint(room_data)
+    room_data = response.json()['results']
+    # jprint(room_data)
+    print(type(room_data))
+    # print(room_data['results'])
+    # for room in room_data['results']:
+    #     print(f"id: {room['id']} name: {room['name']}")
 
 class Room:
     def __init__(self, id, name, description, x, y):
@@ -86,7 +94,7 @@ class World:
 
         # While there are rooms to be created...
         previous_room = None
-        while room_count < num_rooms:
+        for room in room_data:
 
             # Calculate the direction of the room to be created
             if direction > 0 and x < size_x - 1:
@@ -102,7 +110,7 @@ class World:
                 direction *= -1
 
             # Create a room in the given direction
-            room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
+            room = Room(room['id'], room['name'], room['description'], x, y)
             # Note that in Django, you'll need to save the room after you create it
 
             # Save the room in the World grid
@@ -174,11 +182,11 @@ class World:
 
 
 w = World()
-num_rooms = 44
+num_rooms = len(room_data)
 width = 8
 height = 7
-w.generate_rooms(width, height, num_rooms)
-w.print_rooms()
+# w.generate_rooms(width, height, num_rooms)
+# w.print_rooms()
 
 
 print(f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
