@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { Component } from "react";
 import axios from 'axios';
+import axiosConfig from "../axiosConfig";
 
+const url = 'https://django-unchained-mud-staging.herokuapp.com/api/adv/ init'
 
-class World extends React.Component {
+class World extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -11,10 +13,10 @@ class World extends React.Component {
   }
 
   onClick = () => {
-    axios.get('http://localhost:8000/api/adv/ init')
+    axiosConfig.get(url)
       .then((res) => {
 
-        console.log(res)
+        console.log(res.data)
       })
       .catch(err => {
         console.log('error:', err.response)
