@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import axios from 'axios';
 import axiosConfig from "../axiosConfig";
 
+import Room from './Room'
+
 const url = 'https://django-unchained-mud-staging.herokuapp.com/api/adv/rooms/'
 
 class World extends Component {
@@ -29,21 +31,11 @@ class World extends Component {
     return (
       <div>
         {this.state.rooms.map(singleRoom => {
-          return <RoomDetails room={singleRoom} />;
+          return <Room room={ singleRoom } />;
         })}
       </div>
     );
   }
 };
-
-function RoomDetails({ room }) {
-  const { title, description } = room;
-  return (
-    <div>
-      <h2>{title}</h2>
-      <p>{description}</p>
-    </div>
-  );
-}
 
 export default World;
