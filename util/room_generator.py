@@ -1,40 +1,6 @@
-# Sample Python code that can be used to generate rooms in
-# a zig-zag pattern.
-#
-# You can modify generate_rooms() to create your own
-# procedural generation algorithm and use print_rooms()
-# to see the world.
-
 import requests
 import json
-
-def jprint(obj):
-    text = json.dumps(obj, sort_keys=True, indent=4)
-    print(text)
-
-def format_data(obj):
-    text = json.dumps(obj, sort_keys=True, indent=4)
-    return text
-
-url = 'https://www.giantbomb.com/api/locations/'
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
-    }
-
-parameters = {
-    "api_key": "6e5592f572b4fad00e2e2d1b26aadbfffae05112",
-    "format": "json",
-    "field_list": "name,description,id"
-}
-
-response = requests.get(url, headers=headers, params=parameters)
-if response.status_code == 200:
-    room_data = response.json()['results']
-    # jprint(room_data)
-    print(type(room_data))
-    # print(room_data['results'])
-    # for room in room_data['results']:
-    #     print(f"id: {room['id']} name: {room['name']}")
+from decouple import config
 
 class Room:
     def __init__(self, id, name, description, x, y):
@@ -71,7 +37,7 @@ class World:
         self.grid = None
         self.width = 0
         self.height = 0
-    def generate_rooms(self, size_x, size_y, num_rooms):
+    def generate_rooms(self, size_x, size_y, room_data):
         '''
         Fill up the grid, bottom to top, in a zig-zag pattern
         '''
@@ -91,10 +57,9 @@ class World:
         # Start generating rooms to the east
         direction = 1  # 1: east, -1: west
 
-
-        # While there are rooms to be created...
+        # Auto-generate rooms using API data
         previous_room = None
-        for room in room_data:
+        for room_info in room_data:
 
             # Calculate the direction of the room to be created
             if direction > 0 and x < size_x - 1:
@@ -110,7 +75,7 @@ class World:
                 direction *= -1
 
             # Create a room in the given direction
-            room = Room(room['id'], room['name'], room['description'], x, y)
+            room = Room(room_info['id'], room_info['name'], room_info['description'], x, y)
             # Note that in Django, you'll need to save the room after you create it
 
             # Save the room in the World grid
@@ -180,13 +145,44 @@ class World:
         # Print string
         print(str)
 
+# Get unqiue room information from API service
+def getRoomData(url, headers, params):
+    response = requests.get(url, headers=headers, params=params)
 
+    if response.status_code == 200:
+        data = response.json()['results']
+        return data
+    else:
+        print("No data available")
+        return None
+
+
+################### GENERATE ROOMS ##########################
+# API information
+url = 'https://www.giantbomb.com/api/locations/'
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
+}
+
+parameters = {
+    "api_key": config('API_KEY'),
+    "format": "json",
+    "field_list": "name,description,id"
+}
+
+# Retrieve API data
+room_list = getRoomData(url, headers, parameters)
+# Create game world
 w = World()
-num_rooms = len(room_data)
-width = 8
-height = 7
-# w.generate_rooms(width, height, num_rooms)
-# w.print_rooms()
+width = 10
+height = 10
+if room_list:
+    w.generate_rooms(width, height, room_list)
+    w.print_rooms()
+    num_rooms = len(room_list)
+else:
+    print("Unavailable API data, no rooms were created.")
+    num_rooms = 0
 
-
+# Print World Summary
 print(f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
