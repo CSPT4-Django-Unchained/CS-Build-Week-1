@@ -1,19 +1,23 @@
 import React from "react";
+import styled from "styled-components"
+
+const RoomStyle = styled.div `
+  background: grey;
+  border: 1px solid red;
+  display: flex;
+  justify-content: center;
+`
 
 
 const Room = (props) => {
 
-    const { title, description, n_to, s_to, e_to, w_to } = props.room;
+    const { title, description } = props.room;
 
     return (
-      <div>
+      <RoomStyle>
         <h2>{title}</h2>
-        <p>{description}</p>
-        <button>North</button>
-        <button>South</button>
-        <button>West</button>
-        <button>East</button>
-      </div>
+        {/* <p>{description}</p> */}
+      </RoomStyle>
     );
   
 }
