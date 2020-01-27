@@ -61,8 +61,13 @@ class World extends Component {
       .then(res => {
         console.log("MOVED", res.data)
         this.setState({
-          currentActiveRoom: res.data.title
+          currentActiveRoom: res.data.title,
+
         })
+        const isDirectionBlocked = res.data.error_msg
+        if (isDirectionBlocked) {
+          alert("Choose another direction!")
+        }
       })
       .catch(err => {
         console.log('error:', err.response)
@@ -81,6 +86,7 @@ class World extends Component {
         </NavButtons>
 
          {this.state.rooms.map((singleRoom, index) => {
+           // console.log("WHAT", singleRoom)
           return <Room key={index}
                        room={singleRoom}
                        isPlayerInside={
