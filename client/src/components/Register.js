@@ -65,12 +65,14 @@ class Register extends Component {
                 name="password1"
                 value={this.state.password1}
                 onChange={this.onChange}
+                type="password"
               />
               Re-enter Password:
               <Input
                 name="password2"
                 value={this.state.password2}
                 onChange={this.onChange}
+                type="password"
               />
             </Label>
             <Button>Submit</Button>
