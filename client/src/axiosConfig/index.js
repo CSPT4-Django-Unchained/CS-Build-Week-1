@@ -8,7 +8,7 @@ export default function() {
     baseURL: 'https://django-unchained-mud-staging.herokuapp.com/',
     // baseURL: process.env.REACT_APP_URL,
     headers: {
-      Authorization: token
+      Authorization: `Token ${token}`
     }
   })
 }
