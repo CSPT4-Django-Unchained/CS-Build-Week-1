@@ -1,48 +1,49 @@
 import React, { Component } from "react";
-import axios from "axios";
 import styled from "styled-components";
-
+import axiosConfig from '../axiosConfig'
 import Room from "./Room";
+
+const initUrl = 'api/adv/init/';
+const roomsUrl = 'api/adv/rooms/';
+const moveUrl = 'api/adv/move/';
 
 const StyledWorld = styled.div`
   display: grid;
   grid-template-columns: 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px;
+  overflow: scroll;
 `;
+
+const NavButtons = styled.div`
+  position: fixed;
+  
+`
 
 class World extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      rooms: []
+      rooms: [],
+      currentActiveRoom: '',
     };
   }
 
   initPlayer = () => {
-    const token = localStorage.getItem("token");
-
-    axios({
-      url: "https://lambda-mud-test.herokuapp.com/api/adv/init/",
-      method: "GET",
-      headers: {
-        Authorization: `Token 626a1a9d5ab38fe08f0bab5d5b75f13fb36a12d0`
-      }
-    })
-    .then(res =>  {
-      console.log('Init', res.data)
-    })
+    axiosConfig()
+      .get(initUrl)
+      .then(res =>  {
+        console.log('Init', res.data)
+        this.setState({
+          currentActiveRoom: res.data.title,
+        })
+      })
+      .catch(e => console.log('Error initPlayer', e));
   }
 
   componentDidMount = () => {
     this.initPlayer();
 
-    const token = localStorage.getItem("token");
-    axios({
-      url: "https://lambda-mud-test.herokuapp.com/api/adv/rooms/",
-      method: "GET",
-      headers: {
-        Authorization: `Token 626a1a9d5ab38fe08f0bab5d5b75f13fb36a12d0`
-      }
-    })
+    axiosConfig()
+      .get(roomsUrl)
       .then(res => {
         console.log("CDM", res)
         this.setState({
@@ -55,20 +56,13 @@ class World extends Component {
   };
 
   movePlayer = (dir) => {
-    const token = localStorage.getItem("token");
-
-    axios({
-      url: "https://lambda-mud-test.herokuapp.com/api/adv/move/",
-      method: "POST",
-      data: {
-        direction: dir
-      },
-      headers: {
-        Authorization: `Token 626a1a9d5ab38fe08f0bab5d5b75f13fb36a12d0`
-      }
-    })
+    axiosConfig()
+      .post(moveUrl, {direction: dir})
       .then(res => {
-        console.log(res.data)
+        console.log("MOVED", res.data)
+        this.setState({
+          currentActiveRoom: res.data.title
+        })
       })
       .catch(err => {
         console.log('error:', err.response)
@@ -76,18 +70,24 @@ class World extends Component {
   }
 
   render() {
+    console.log('ACTIVEROOM', this.state.currentActiveRoom)
     return (
       <StyledWorld>
-        <div>
+        <NavButtons>
           <button onClick={ () => this.movePlayer('n') }>North</button>
           <button onClick={ () => this.movePlayer('s') }>South</button>
           <button onClick={ () => this.movePlayer('w') }>West</button>
           <button onClick={ () => this.movePlayer('e') }>East</button>
-        </div>
+        </NavButtons>
 
-        {/* {this.state.rooms.map(singleRoom => {
-          return <Room key={this.state.id} room={singleRoom} />;
-        })} */}
+         {this.state.rooms.map((singleRoom, index) => {
+          return <Room key={index}
+                       room={singleRoom}
+                       isPlayerInside={
+                         this.state.currentActiveRoom === singleRoom.title
+                       }
+          />;
+        })}
       </StyledWorld>
     );
   }
