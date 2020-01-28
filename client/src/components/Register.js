@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axiosConfig from "../axiosConfig/";
+import { axiosNoAuth } from "../axiosConfig/";
 import { Button, Form, Label, Input } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
@@ -32,16 +32,16 @@ class Register extends Component {
       password2: this.state.password2
     }
 
-    axiosConfig()
-      .post(url, user)
-      .then((res) => {
-        console.log(res.data)
-        localStorage.setItem('token', res.data.key)
-        this.props.history.push('/world')
-      })
-      .catch((err) => {
-        console.log(err)
-      });
+    axiosNoAuth()
+			.post(url, user)
+			.then(res => {
+				console.log(res.data);
+				localStorage.setItem("token", res.data.key);
+				this.props.history.push("/world");
+			})
+			.catch(err => {
+				console.log(err);
+			});
   }
 
   render() {
