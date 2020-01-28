@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import axiosConfig from "../axiosConfig";
+import axios from "axios";
 import { Button, Form, Label, Input} from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
-const url = 'api/login/';
+const url = "https://djngo-unchained-mud-staging.herokuapp.com/api/login/";
 
 class Login extends Component {
   constructor(props) {
@@ -29,18 +29,18 @@ class Login extends Component {
       password: this.state.password
     }
 
-    axiosConfig()
-      .post(url, user)
-      .then((res) => {
-        localStorage.setItem('token', res.data.key)
+    axios
+			.post(url, user)
+			.then(res => {
+				localStorage.setItem("token", res.data.key);
 
-        console.log("ISTHISToken::", res.data.key)
+				console.log("ISTHISToken::", res.data.key);
 
-        this.props.history.push('/world')
-      })
-      .catch((err) => {
-        console.log('error:', err.response)
-      });
+				this.props.history.push("/world");
+			})
+			.catch(err => {
+				console.log("error:", err.response);
+			});
   }
 
   render() {

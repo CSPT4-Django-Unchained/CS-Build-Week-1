@@ -7,8 +7,8 @@ export default function() {
     // baseURL: 'https://lambda-mud-test.herokuapp.com/',
     baseURL: 'https://django-unchained-mud-staging.herokuapp.com/',
     // baseURL: process.env.REACT_APP_URL,
-    // headers: {
-    //   Authorization: `Token ${token}`
-    // }
+    headers: {
+      Authorization: `Token ${token}`
+    }
   })
 }

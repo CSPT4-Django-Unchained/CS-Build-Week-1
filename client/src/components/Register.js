@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import axiosConfig from "../axiosConfig/";
+import axios from "axios";
 import { Button, Form, Label, Input } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
-const url = 'api/registration/';
+const url =
+	"https://django-unchained-mud-staging.herokuapp.com/api/registration/";
 
 class Register extends Component {
   constructor(props) {
@@ -32,7 +33,7 @@ class Register extends Component {
       password2: this.state.password2
     }
 
-    axiosConfig()
+    axios
       .post(url, user)
       .then((res) => {
         console.log(res.data)
